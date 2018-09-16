@@ -1,10 +1,5 @@
 FROM node:10.10-alpine
 
-ENV ADMIN_USERNAME="admin" \
-    ADMIN_PASSWORD="admin" \
-    ADMIN_FULLNAME="Admin" \
-    ADMIN_EMAIL="admin@example.com"
-
 WORKDIR /opt/cronicle/
 
 RUN apk add --no-cache --virtual .dep curl \
@@ -16,6 +11,11 @@ COPY entrypoint.sh /entrypoint.sh
 COPY setup.json conf/setup.json 
 
 EXPOSE 3012
+
+ENV ADMIN_USERNAME="admin" \
+    ADMIN_PASSWORD="admin" \
+    ADMIN_FULLNAME="Admin" \
+    ADMIN_EMAIL="admin@example.com"
 
 VOLUME [ "/opt/cronicle/data", "/opt/cronicle/logs" ]
 
