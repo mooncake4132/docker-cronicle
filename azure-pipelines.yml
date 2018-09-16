@@ -1,0 +1,9 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+variables:
+  imageName: 'mooncake4132/cronicle:$(build.buildId)'
+
+steps:
+- script: docker build -t $(imageName) .
+  displayName: 'docker build'
