@@ -8,7 +8,7 @@ RUN apk add --no-cache --virtual .dep curl \
     && apk del .dep
 
 COPY entrypoint.sh /entrypoint.sh
-COPY setup.json conf/setup.json 
+COPY setup.json conf/setup.json
 
 EXPOSE 3012
 
