@@ -1,0 +1,125 @@
+{
+	"storage": [
+		[ "put", "users/admin", {
+			"username": "##ADMIN_USERNAME##",
+			"password": "##ADMIN_PASSWORD##",
+			"full_name": "##ADMIN_FULLNAME##",
+			"email": "##ADMIN_EMAIL##",
+			"active": 1,
+			"modified": ##ADMIN_MODIFIED##,
+			"created": ##ADMIN_MODIFIED##,
+			"salt": "salty",
+			"privileges": {
+				"admin": 1
+			}
+		} ],
+		[ "listCreate", "global/users", { "page_size": 100 } ],
+		[ "listPush", "global/users", { "username": "##ADMIN_USERNAME##" } ],
+		[ "listCreate", "global/plugins", {} ],
+		[ "listPush", "global/plugins", {} ],
+		[ "listCreate", "global/categories", {} ],
+		[ "listPush", "global/categories", {
+			"id": "general",
+			"title": "General",
+			"enabled": 1,
+			"username": "##ADMIN_USERNAME##",
+			"modified": 1434125333,
+			"created": 1434125333,
+			"description": "For events that don't fit anywhere else.",
+			"max_children": 0
+		} ],
+		[ "listCreate", "global/server_groups", {} ],
+		[ "listPush", "global/server_groups", {
+			"id": "maingrp",
+			"title": "Master Group",
+			"regexp": "_HOSTNAME_",
+			"master": 1
+		} ],
+		[ "listPush", "global/server_groups", {
+			"id": "allgrp",
+			"title": "All Servers",
+			"regexp": ".+",
+			"master": 0
+		} ],
+		[ "listCreate", "global/servers", {} ],
+		[ "listPush", "global/servers", {
+			"hostname": "_HOSTNAME_",
+			"ip": "_IP_"
+		} ],
+		[ "listCreate", "global/schedule", {} ],
+		[ "listCreate", "global/api_keys", {} ]
+	],
+	
+	"build": {
+		"common": [
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/jquery/dist/jquery.min.map", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/zxcvbn/dist/zxcvbn.js.map", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/chart.js/dist/Chart.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/font-awesome/css/font-awesome.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/font-awesome/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css", "htdocs/css/" ],
+			[ "symlinkCompress", "node_modules/mdi/css/materialdesignicons.min.css.map", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/mdi/fonts/*", "htdocs/fonts/" ],
+			
+			[ "symlinkCompress", "node_modules/moment/min/moment.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/moment-timezone/builds/moment-timezone-with-data.min.js", "htdocs/js/external/" ],
+			[ "symlinkCompress", "node_modules/jstimezonedetect/dist/jstz.min.js", "htdocs/js/external/" ],
+			
+			[ "symlinkFile", "node_modules/pixl-webapp/js", "htdocs/js/common" ],
+			[ "symlinkFile", "node_modules/pixl-webapp/css/base.css", "htdocs/css/" ],
+			[ "copyFiles", "node_modules/pixl-webapp/fonts/*", "htdocs/fonts/" ],
+			
+			[ "chmodFiles", "755", "bin/*" ]
+		],
+		"dev": [
+			[ "deleteFiles", "htdocs/css/_combo*" ],
+			[ "deleteFiles", "htdocs/js/_combo*" ],
+			[ "deleteFile", "htdocs/index.html" ],
+			[ "deleteFile", "htdocs/index.html.gz" ],
+			[ "symlinkFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			[ "symlinkFile", "sample_conf", "conf" ]
+		],
+		"dist": [
+			{
+				"action": "generateSecretKey",
+				"file": "sample_conf/config.json",
+				"key": "secret_key"
+			},
+			[ "copyDir", "sample_conf", "conf", true ],
+			[ "copyFile", "htdocs/index-dev.html", "htdocs/index.html" ],
+			{
+				"action": "bundleCompress",
+				"uglify": false,
+				"header": "/* Copyright (c) PixlCore.com, MIT License. https://github.com/jhuckaby/Cronicle */",
+				"dest_bundle": "htdocs/js/_combo.js",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_SCRIPT",
+				"dest_bundle_tag": "<script src=\"js/_combo.js\"></script>"
+			},
+			{
+				"action": "bundleCompress",
+				"strip_source_maps": true,
+				"dest_bundle": "htdocs/css/_combo.css",
+				"html_file": "htdocs/index.html",
+				"match_key": "COMBINE_STYLE",
+				"dest_bundle_tag": "<link rel=\"stylesheet\" href=\"css/_combo.css\">"
+			},
+			{
+				"action": "printMessage",
+				"lines": [
+					"Welcome to Cronicle!",
+					"First time installing?  You should configure your settings in '/opt/cronicle/conf/config.json'.",
+					"Next, if this is a master server, type: '/opt/cronicle/bin/control.sh setup' to init storage.",
+					"Then, to start the service, type: '/opt/cronicle/bin/control.sh start'.",
+					"For full docs, please visit: http://github.com/jhuckaby/Cronicle",
+					"Enjoy!"
+				]
+			}
+		]
+	}
+}
