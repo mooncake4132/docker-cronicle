@@ -2,9 +2,15 @@ FROM node:10.10-alpine
 
 WORKDIR /opt/cronicle/
 
-RUN apk add --no-cache --virtual .dep curl \
+ARG CRONICLE_VERSION=0.8.27
+
+RUN apk add --no-cache --virtual .dep curl tar \
     # Install Cronicle
-    && curl -s "https://raw.githubusercontent.com/jhuckaby/Cronicle/master/bin/install.js" | node \
+    && mkdir -p /opt/cronicle \
+    && cd /opt/cronicle \
+    && curl -L https://github.com/jhuckaby/Cronicle/archive/v${CRONICLE_VERSION}.tar.gz | tar zxvf - --strip-components 1 \
+    && npm install \
+    && node bin/build.js dist \
     && apk del .dep
 
 COPY entrypoint.sh /entrypoint.sh
