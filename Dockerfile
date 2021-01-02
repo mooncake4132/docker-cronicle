@@ -2,7 +2,7 @@ FROM node:10.10-alpine
 
 WORKDIR /opt/cronicle/
 
-ARG CRONICLE_VERSION=0.8.51
+ARG CRONICLE_VERSION=0.8.52
 
 RUN apk add --no-cache --virtual .dep curl tar \
     # Install Cronicle
